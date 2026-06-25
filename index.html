@@ -180,6 +180,22 @@ footer{text-align:center; font-size:.73rem; color:var(--ink-soft); margin-top:18
 .wnote{font-size:.78rem; color:var(--ink-soft); margin-top:8px; line-height:1.5}
 .spinner{display:inline-block; width:15px; height:15px; border:2px solid #cfe6df; border-top-color:var(--teal); border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.speaking-launch{width:100%; margin-top:10px; padding:14px; font-size:1rem; font-weight:700; color:#fff;
+  background:linear-gradient(100deg,#bd7b1e,#9a6212); border:none; border-radius:14px; cursor:pointer}
+.speaking-launch:hover{filter:brightness(1.05)}
+.cue{background:#fff7ec; border:1px solid #ecd9b6; border-radius:13px; padding:14px; margin-bottom:10px}
+.cue .ttl{font-weight:700; font-size:1rem; margin-bottom:6px}
+.cue ul{margin:6px 0 0; padding-left:18px} .cue li{margin:3px 0; font-size:.9rem}
+.rec-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:6px 0}
+.rec-btn{width:60px; height:60px; border-radius:50%; border:none; background:#bd7b1e; color:#fff; font-size:1.5rem; cursor:pointer; flex:0 0 auto; display:flex; align-items:center; justify-content:center}
+.rec-btn.on{background:#c0392b; animation:pulse 1.1s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}70%{box-shadow:0 0 0 12px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+.rec-meta{font-variant-numeric:tabular-nums; font-weight:700; font-family:"Bricolage Grotesque",sans-serif; font-size:1.1rem}
+.rec-meta small{display:block; font-family:"Be Vietnam Pro"; font-weight:400; font-size:.74rem; color:var(--ink-soft)}
+.sp-audio{width:100%; margin-top:8px}
+.sp-prep{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+.sp-prep button{padding:8px 12px; font-size:.85rem}
+.sp-tip{font-size:.78rem; color:var(--ink-soft); margin-top:6px; line-height:1.5}
 @media (prefers-reduced-motion:reduce){ .card{transition:none} }
 </style>
 </head>
@@ -245,6 +261,7 @@ footer{text-align:center; font-size:.73rem; color:var(--ink-soft); margin-top:18
     <button id="reset">↺ Xoá đánh dấu</button>
   </div>
   <button class="writing-launch" id="writingBtn">✍️ Luyện Writing — Task 1 &amp; Task 2</button>
+  <button class="speaking-launch" id="speakingBtn">🎙️ Luyện Speaking — Part 1 · 2 · 3</button>
 
   <footer>
     Mẹo: nghe phát âm 2–3 lần rồi đọc to theo. Tự đặt một câu cho mỗi cụm để nhớ lâu.<br>
@@ -387,6 +404,47 @@ a piece of cake | dễ như ăn bánh"></textarea>
     </div>
     <div class="wres" id="wRes"></div>
     <div class="mbtns"><button class="primary" id="wClose">Đóng</button></div>
+  </div>
+</div>
+
+<!-- Speaking workspace -->
+<div class="modal" id="speakingModal" hidden>
+  <div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="spTitle">
+    <h2 id="spTitle">Luyện Speaking</h2>
+    <div class="wtabs">
+      <button id="sp1" class="on">Part 1</button>
+      <button id="sp2">Part 2</button>
+      <button id="sp3">Part 3</button>
+    </div>
+    <div class="wbar">
+      <button id="spRandom">🎲 Đề ngẫu nhiên</button>
+      <button id="spSpeakQ" style="padding:9px 12px">🔊 Đọc đề</button>
+    </div>
+    <div id="spPromptWrap"><div class="prompt-box" id="spPrompt"><span class="ptype">Đề bài</span>Bấm “Đề ngẫu nhiên” để bắt đầu.</div></div>
+
+    <div class="sp-prep" id="spPrepRow" style="display:none">
+      <button id="spPrepBtn">⏱ Chuẩn bị 1 phút</button>
+      <span class="rec-meta" id="spPrepTimer" style="font-size:1rem">01:00</span>
+      <span class="sp-tip" style="margin:0">Part 2: ghi ý ra giấy 1 phút, rồi nói 1–2 phút.</span>
+    </div>
+
+    <div class="rec-row">
+      <button class="rec-btn" id="spRec" aria-label="Thu âm">●</button>
+      <div class="rec-meta" id="spRecTime">00:00<small id="spRecHint">Bấm để bắt đầu thu âm</small></div>
+    </div>
+    <audio id="spAudio" class="sp-audio" controls hidden></audio>
+
+    <label style="display:block;font-size:.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:12px 0 5px">Bản ghi lời nói (tự nhận diện — bạn có thể sửa)</label>
+    <textarea id="spTranscript" placeholder="Khi bạn nói, app sẽ cố gắng ghi lại lời (Chrome/Edge). Nếu không nhận diện được, bạn có thể tự gõ lại để được chấm."></textarea>
+
+    <div class="wactions">
+      <button id="spCheck">⚡ Tự đánh giá</button>
+      <button id="spAiGrade" class="ai">✨ Chấm bằng AI</button>
+      <button id="spModel" class="ai">✨ Câu mẫu (AI)</button>
+      <button id="spSample">📑 Câu mẫu có sẵn</button>
+    </div>
+    <div class="wres" id="spRes"></div>
+    <div class="mbtns"><button class="primary" id="spClose">Đóng</button></div>
   </div>
 </div>
 
@@ -894,6 +952,202 @@ function openWriting(){
   updateWC(); $('wRes').innerHTML=''; writingModal.hidden=false;
 }
 
+/* ================= SPEAKING MODULE ================= */
+const speakingModal=$('speakingModal');
+const SP1=[
+ {q:"Do you work or are you a student?", a:"I'm currently a student. I'm in my third year at university, studying engineering, and I really enjoy the practical side of it."},
+ {q:"What do you usually do at the weekend?", a:"I usually relax and catch up with friends. On Saturdays I often go for a coffee, and on Sundays I prefer to stay home and read."},
+ {q:"Do you enjoy cooking?", a:"Yes, I do, actually. I find it quite relaxing after a busy day, and I like trying out new recipes at the weekend."},
+ {q:"How often do you use your phone?", a:"To be honest, almost all the time. I rely on it for studying, messaging and staying connected, so it's rarely out of my hand."},
+ {q:"What kind of music do you like?", a:"I'm a big fan of pop music because it's cheerful and easy to listen to. I usually put it on while I'm commuting."},
+ {q:"Do you prefer tea or coffee?", a:"I'd say coffee, mainly because it helps me wake up in the morning. Tea is nice too, but I drink it more in the evening."},
+ {q:"Do you like reading books?", a:"Yes, I love reading. It broadens my knowledge and helps me relax, so I always keep a book in my bag."},
+ {q:"How do you usually travel around your city?", a:"I mostly get around by motorbike because it's fast and convenient. For longer trips, though, I take the bus."},
+ {q:"What's your favourite season?", a:"My favourite is autumn because the weather is cool and pleasant. I love going for walks when the leaves change colour."},
+ {q:"Do you like watching films?", a:"Definitely. It's a great way to relax and escape from reality. I usually watch a comedy with my family on Friday nights."},
+ {q:"Do you do any sports?", a:"Yes, I play badminton a couple of times a week. It keeps me fit and it's a good way to spend time with friends."},
+ {q:"What do you usually have for breakfast?", a:"Normally something quick, like bread and eggs with a coffee, because I'm often in a hurry before work."},
+ {q:"Do you enjoy shopping?", a:"To some extent. I quite like shopping for clothes, but I'm not a fan of crowded malls, so I often shop online."},
+ {q:"How important is your hometown to you?", a:"It means a lot to me. It's where I grew up and where my family is, so I always feel relaxed when I go back."},
+ {q:"Do you like taking photos?", a:"Yes, I love it. It helps me capture special moments, and I always take photos when I travel somewhere new."},
+ {q:"What do you do to relax?", a:"I usually listen to music or go for a walk. They're simple things, but they really help me unwind after a long day."},
+ {q:"Do you prefer staying in or going out?", a:"It depends on my mood, but more often than not I prefer staying in, especially during the week when I'm tired."},
+ {q:"Do you keep in touch with old friends?", a:"Yes, I try to. We use social media to stay in touch, and we meet up for a meal every now and then."},
+ {q:"What's your favourite kind of food?", a:"I'm really into Vietnamese food, especially pho. It's tasty, comforting, and reminds me of home."},
+ {q:"Do you usually get enough sleep?", a:"I try to, but it's not always easy with my schedule. I aim for about seven hours, because sleep really affects my mood."},
+];
+const SP2=[
+ {title:"Describe a place you like to visit.", bullets:["where it is","how often you go there","what you do there","and explain why you like it"],
+  model:"I'd like to talk about a small coffee shop near my house that I really enjoy visiting. It's just a ten-minute walk away, so I go there almost every weekend. Usually, I order a coffee, sit by the window and either read a book or catch up with a friend. What I love most about it is the relaxing atmosphere — it's quiet, the staff are friendly, and there's always soft music playing in the background. It's become a kind of escape for me after a busy week. Whenever I feel stressed, going there helps me unwind and recharge, so it really means a lot to me."},
+ {title:"Describe a skill you would like to learn.", bullets:["what it is","how you would learn it","how long it might take","and explain why you want to learn it"],
+  model:"A skill I'd really like to learn is playing the guitar. I've always been a big fan of music, and being able to play an instrument has been a dream of mine for years. I'd probably learn it through online lessons and lots of practice at home, maybe half an hour a day. I imagine it would take at least six months to a year to get reasonably good. The main reason I want to learn it is that it would be a creative outlet for me and a great way to relax. On top of that, I think it would be a lot of fun to play songs with friends."},
+ {title:"Describe a person who has influenced you.", bullets:["who they are","how you know them","what they are like","and explain how they have influenced you"],
+  model:"I'd like to talk about my high school English teacher, who has had a huge influence on me. She taught me for two years, and she was incredibly patient and encouraging. What stood out was how she always pushed us to speak up in class, even when we made mistakes. Thanks to her, I gradually became more confident and fell in love with the language. She also set a great example through her hard work and positive attitude. Because of her, I decided to keep studying English seriously, and I still think of her advice whenever I feel like giving up."},
+ {title:"Describe a memorable trip you have taken.", bullets:["where you went","who you went with","what you did","and explain why it was memorable"],
+  model:"I'd like to describe a trip I took to Da Nang last summer with my family. We spent about four days there, mostly relaxing on the beach and exploring the city. We went sightseeing, tried lots of local seafood, and even visited the famous Golden Bridge. What made it so memorable was that it was the first holiday we'd had together in years, so we really treasured the time. The scenery was breathtaking, and I came back feeling completely refreshed. To this day, it's one of my happiest memories, and I'd love to go back one day."},
+ {title:"Describe a hobby you enjoy.", bullets:["what it is","how you started it","how often you do it","and explain why you enjoy it"],
+  model:"One hobby I really enjoy is reading novels. I started it as a child when my mother gave me my first storybook, and I've been hooked ever since. These days I read almost every evening before bed. I love it because it broadens my knowledge and lets me escape from reality for a while. A good book can completely absorb me, and I often lose track of time. On top of that, it's improved my vocabulary a lot, which has helped me in my studies. For me, it's the perfect way to unwind."},
+ {title:"Describe a goal you want to achieve.", bullets:["what the goal is","when you set it","what you are doing to achieve it","and explain why it matters to you"],
+  model:"A goal I'm working towards is getting a good score in IELTS so I can study abroad. I set this goal about a year ago when I decided I wanted to broaden my horizons. To achieve it, I study English every day — practising speaking, learning new collocations, and writing essays. It's not always easy to stay motivated, but I keep reminding myself why it matters. Reaching this goal would open up better opportunities for my future career, and it would also be a huge personal achievement. So I'm determined to keep making progress until I get there."},
+ {title:"Describe a piece of technology you find useful.", bullets:["what it is","how you use it","how often you use it","and explain why it is useful"],
+  model:"I'd like to talk about my smartphone, which I honestly couldn't live without. I use it for almost everything — messaging, studying, taking photos and staying connected with friends. I'd say I use it every hour of the day. What makes it so useful is how much it saves me time and effort; I can look up information instantly and manage my whole schedule in one place. Of course, it can be distracting, so I try to set limits. But overall, it's a cutting-edge device that has made my daily life far more convenient."},
+ {title:"Describe a festival you enjoy.", bullets:["what festival it is","when it takes place","what people do","and explain why you enjoy it"],
+  model:"The festival I enjoy most is Tet, the Lunar New Year in Vietnam. It usually takes place in late January or February and lasts several days. During Tet, families clean and decorate their homes, prepare special food, and give lucky money to children. What I love about it is the festive atmosphere and the chance for a family reunion — relatives gather from all over to celebrate together. It really brings people closer. For me, it's the most meaningful time of the year, full of warmth, tradition and good food, and I always look forward to it."},
+];
+const SP3=[
+ {q:"Do you think people read less than they used to? Why?", a:"Yes, I'd say so, mainly because of technology. People tend to spend their free time on phones and social media rather than books, so reading for pleasure has become less common, especially among young people."},
+ {q:"How has technology changed the way we communicate?", a:"It's had a huge impact. We can now stay connected instantly with anyone around the world, which is convenient. However, some argue it has reduced face-to-face interaction, so it's a bit of a double-edged sword."},
+ {q:"Should governments invest more in public transport?", a:"Absolutely. Better public transport would ease traffic and reduce pollution, which benefits everyone. It would also make cities more accessible for people who can't afford a car, so I think it's money well spent."},
+ {q:"Why do some people prefer living in the countryside?", a:"Mainly because it's more peaceful and the air is fresher. The pace of life is slower, which can be less stressful. That said, it often lacks the job opportunities and facilities you'd find in a city."},
+ {q:"Do you think advertising influences what people buy?", a:"Definitely. Advertising is designed to influence consumers, and a catchy slogan or an eye-catching ad can create a need we didn't even have. So it plays a major role in our spending habits."},
+ {q:"How important is it to learn a foreign language?", a:"I'd say it's increasingly important. A foreign language opens up better job prospects and lets you experience other cultures. In a globalised world, being able to communicate across borders is a real advantage."},
+ {q:"Should children be taught about money at school?", a:"Yes, I think so. Many young people leave school without knowing how to manage a budget, so teaching them early would set a strong foundation and help them avoid debt later in life."},
+ {q:"What are the benefits of doing sport?", a:"There are quite a few. Sport keeps you fit, relieves stress and builds team spirit. On top of that, it gives you a sense of achievement, which is good for your mental health as well."},
+ {q:"Do you think social media does more harm than good?", a:"It's hard to say — it depends on how it's used. On the one hand, it helps people stay in touch and share information. On the other, it can be addictive and lead to problems like cyberbullying."},
+ {q:"Why do people enjoy travelling?", a:"I think mainly because it lets them explore new places and experience different cultures. It broadens the mind and gives you a break from routine. For many, it's a chance to get away from it all and recharge."},
+ {q:"Should companies allow more people to work from home?", a:"I'd argue yes, at least to some extent. It can improve work-life balance and cut commuting time. However, it doesn't suit every job, so a flexible, hybrid approach is probably the best solution."},
+ {q:"How can we protect the environment in daily life?", a:"There's a lot we can do. We can cut down on waste, recycle, and use public transport instead of driving. Small actions like saving energy at home really add up if everyone takes part."},
+ {q:"Is it better to be self-employed or to work for a company?", a:"Both have their pros and cons. Being self-employed gives you freedom and flexibility, but it's less stable. Working for a company offers job security and a steady income, which many people value more."},
+ {q:"Why do some people find it hard to make friends as adults?", a:"I think it's partly because adults are busy with work and have less free time. People also tend to drift apart after school, so you have to make more of an effort to build new relationships."},
+ {q:"Do you think exams are a good way to measure ability?", a:"To some extent, yes, but not entirely. Exams test knowledge under pressure, which is useful, but they don't always reflect creativity or practical skills, so they shouldn't be the only measure."},
+ {q:"How has shopping changed in recent years?", a:"It's changed dramatically because of online shopping. People can now compare prices and buy almost anything from home, which is convenient. As a result, many traditional shops have struggled to compete."},
+ {q:"Should the government support the arts?", a:"I believe so. The arts are an important part of our cultural heritage and bring people together. Although public services should come first, supporting music and theatre also enriches society and creates jobs."},
+ {q:"What makes a city a good place to live?", a:"For me, a good city has reliable public transport, plenty of green spaces and a strong sense of community. Affordable housing and good facilities matter too, as they raise people's overall quality of life."},
+];
+
+let spPart=1, spItem=null, spMR=null, spChunks=[], spStream=null, spRecording=false, spStart=0, spRecTimerId=null, spRecog=null, spPrepId=null, spLastDur=0;
+function spBank(){ return spPart===1?SP1:(spPart===3?SP3:SP2); }
+function setPartUI(n){ spPart=n; ['sp1','sp2','sp3'].forEach((id,i)=>$(id).classList.toggle('on',i+1===n)); $('spPrepRow').style.display=(n===2?'flex':'none'); spItem=null; renderSpPrompt(); $('spRes').innerHTML=''; resetPrep(); }
+function spRandom(){ const b=spBank(); spItem=b[Math.floor(Math.random()*b.length)]; renderSpPrompt(); $('spRes').innerHTML=''; resetPrep(); }
+function renderSpPrompt(){
+  const w=$('spPromptWrap');
+  if(!spItem){ w.innerHTML='<div class="prompt-box"><span class="ptype">Đề bài · Part '+spPart+'</span>Bấm “Đề ngẫu nhiên” để bắt đầu.</div>'; return; }
+  if(spPart===2){ w.innerHTML='<div class="cue"><div class="ttl">'+esc(spItem.title)+'</div><div style="font-size:.82rem;color:var(--ink-soft)">You should say:</div><ul>'+spItem.bullets.map(b=>'<li>'+esc(b)+'</li>').join('')+'</ul></div>'; }
+  else { w.innerHTML='<div class="prompt-box"><span class="ptype">Part '+spPart+'</span>'+esc(spItem.q)+'</div>'; }
+}
+function spQuestionText(){ if(!spItem) return ''; return spPart===2?(spItem.title+' You should say: '+spItem.bullets.join('; ')+'.'):spItem.q; }
+
+/* prep timer (Part 2) */
+function resetPrep(){ if(spPrepId){clearInterval(spPrepId);spPrepId=null;} $('spPrepTimer').textContent='01:00'; $('spPrepBtn').textContent='⏱ Chuẩn bị 1 phút'; }
+function startPrep(){
+  if(spPrepId){ resetPrep(); return; }
+  let s=60; $('spPrepBtn').textContent='⏸ Dừng';
+  spPrepId=setInterval(()=>{ s--; const m=Math.floor(s/60),x=s%60; $('spPrepTimer').textContent=(m<10?'0':'')+m+':'+(x<10?'0':'')+x;
+    if(s<=0){ clearInterval(spPrepId); spPrepId=null; $('spPrepBtn').textContent='⏱ Chuẩn bị 1 phút'; alert('Hết 1 phút chuẩn bị — bắt đầu nói!'); } },1000);
+}
+
+/* recording */
+function spFmt(s){ const m=Math.floor(s/60),x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+async function startRecording(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ alert('Trình duyệt không hỗ trợ thu âm. Bạn có thể tự gõ lại lời nói vào ô bên dưới để được chấm.'); return; }
+  try{ spStream=await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ alert('Không truy cập được micro. Hãy cho phép quyền micro (nên dùng Chrome). Bạn vẫn có thể tự gõ lại lời nói để được chấm.'); return; }
+  $('spTranscript').value=''; $('spAudio').hidden=true;
+  spChunks=[]; let mime='';
+  if(window.MediaRecorder&&MediaRecorder.isTypeSupported){ ['audio/webm','audio/mp4','audio/ogg'].forEach(t=>{ if(!mime&&MediaRecorder.isTypeSupported(t)) mime=t; }); }
+  try{ spMR=mime?new MediaRecorder(spStream,{mimeType:mime}):new MediaRecorder(spStream); }catch(e){ try{ spMR=new MediaRecorder(spStream); }catch(e2){ spMR=null; } }
+  if(spMR){
+    spMR.ondataavailable=e=>{ if(e.data&&e.data.size>0) spChunks.push(e.data); };
+    spMR.onstop=()=>{ try{ const blob=new Blob(spChunks,{type:(spChunks[0]&&spChunks[0].type)||'audio/webm'}); const url=URL.createObjectURL(blob); const a=$('spAudio'); a.src=url; a.hidden=false; }catch(e){} };
+    try{ spMR.start(); }catch(e){}
+  }
+  spStart=Date.now(); spRecording=true;
+  $('spRec').classList.add('on'); $('spRec').textContent='■'; $('spRecHint').textContent='Đang thu… bấm để dừng';
+  spRecTimerId=setInterval(()=>{ $('spRecTime').firstChild.nodeValue=spFmt(Math.round((Date.now()-spStart)/1000)); },400);
+  startRecognition();
+}
+function stopRecording(){
+  if(!spRecording) return;
+  spRecording=false; spLastDur=(Date.now()-spStart)/1000;
+  $('spRec').classList.remove('on'); $('spRec').textContent='●'; $('spRecHint').textContent='Đã thu xong — nghe lại bên dưới';
+  if(spRecTimerId){ clearInterval(spRecTimerId); spRecTimerId=null; }
+  try{ if(spMR&&spMR.state!=='inactive') spMR.stop(); }catch(e){}
+  if(spStream){ spStream.getTracks().forEach(t=>t.stop()); spStream=null; }
+  stopRecognition();
+}
+function toggleRecording(){ spRecording?stopRecording():startRecording(); }
+
+/* speech recognition (transcript) */
+function startRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR) return;
+  try{
+    spRecog=new SR(); spRecog.lang=(SET.accent==='en-US'?'en-US':'en-GB'); spRecog.continuous=true; spRecog.interimResults=true;
+    let finalT='';
+    spRecog.onresult=ev=>{ let interim=''; for(let i=ev.resultIndex;i<ev.results.length;i++){ const r=ev.results[i]; if(r.isFinal) finalT+=r[0].transcript+' '; else interim+=r[0].transcript; } $('spTranscript').value=(finalT+interim).replace(/\s+/g,' ').trim(); };
+    spRecog.onerror=()=>{};
+    spRecog.onend=()=>{ if(spRecording){ try{ spRecog.start(); }catch(e){} } };
+    spRecog.start();
+  }catch(e){ spRecog=null; }
+}
+function stopRecognition(){ try{ if(spRecog){ const r=spRecog; spRecog=null; r.onend=null; r.stop(); } }catch(e){} }
+
+/* heuristic self-eval */
+const SP_FILLERS=['um','uh','er','erm','like','you know','sort of','kind of','basically','i mean'];
+function spHeuristic(){
+  const text=$('spTranscript').value.trim();
+  if(!text){ alert('Chưa có bản ghi lời nói. Hãy thu âm (Chrome) hoặc tự gõ lại lời nói vào ô để được đánh giá.'); return null; }
+  const words=text.match(/[A-Za-z'’]+/g)||[]; const wc=words.length;
+  const dur=spLastDur; const wpm=dur>3?Math.round(wc/(dur/60)):null;
+  const fillers=SP_FILLERS.reduce((n,f)=>{ const re=new RegExp('\\b'+f.replace(/ /g,'\\s+')+'\\b','gi'); return n+((text.match(re)||[]).length); },0);
+  const distinct=new Set(words.map(w=>w.toLowerCase())).size; const diversity=wc?Math.round(distinct/wc*100):0;
+  const linkers=LINKERS.filter(l=>text.toLowerCase().includes(l)).length;
+  const adv=[];
+  adv.push('Số từ nói: '+wc+(dur?(' · thời lượng '+spFmt(Math.round(dur))):'')+(wpm?(' · ~'+wpm+' từ/phút'):''));
+  if(wpm!=null){ if(wpm<90) adv.push('Có vẻ nói chậm/ngập ngừng (~'+wpm+' wpm). Mục tiêu trôi chảy ~120–150 wpm.'); else if(wpm>180) adv.push('Nói khá nhanh (~'+wpm+' wpm) — giữ rõ ràng để dễ nghe.'); else adv.push('Tốc độ nói tốt (~'+wpm+' wpm).'); }
+  adv.push('Từ đệm (um, like, you know…): '+fillers+(fillers>6?' — hơi nhiều, nên giảm bớt.':' — ổn.'));
+  adv.push('Đa dạng từ vựng: '+diversity+'% từ khác nhau'+(diversity<45?' — thử dùng thêm từ đồng nghĩa.':' — tốt.'));
+  if(linkers<2) adv.push('Thêm từ nối (because, for example, however…) để câu trả lời mạch lạc hơn.');
+  if(spPart===2 && (!dur||dur<60)) adv.push('Part 2 nên nói 1–2 phút; bạn mới nói '+(dur?spFmt(Math.round(dur)):'rất ngắn')+'.');
+  let b=6.0; if(wc<40)b-=1.0; if(wpm!=null){ if(wpm<90)b-=0.5; if(wpm>=110&&wpm<=160)b+=0.5; } if(fillers>6)b-=0.5; if(diversity>=50)b+=0.5; if(linkers>=3)b+=0.5;
+  b=Math.max(4.0,Math.min(7.5,b));
+  return {heuristic:true, band:b, advisory:adv};
+}
+
+/* render */
+function spRender(res){
+  const R=$('spRes'); let html='';
+  if(res.bands){ html+='<h3>Điểm ước lượng (AI)</h3><div class="band-grid">'+bandCell(res.bands.fc,'Fluency')+bandCell(res.bands.lr,'Lexical')+bandCell(res.bands.gra,'Grammar')+bandCell('—','Pronun.')+bandCell(res.bands.overall,'Overall',true)+'</div><p class="wnote">Phát âm (Pronunciation) không chấm được từ văn bản — cần nghe ghi âm. Hãy tự nghe lại để tự đánh giá.</p>'; }
+  else if(res.heuristic){ html+='<h3>Tự đánh giá (ước lượng)</h3><div class="band-grid"><div class="band overall" style="grid-column:1/-1"><div class="b">~ '+res.band.toFixed(1)+'</div><div class="t">ước lượng theo bản ghi · chỉ tham khảo (không tính phát âm)</div></div></div>'; }
+  if(res.summary) html+='<p style="font-size:.9rem;line-height:1.55">'+esc(res.summary)+'</p>';
+  if(res.advisory&&res.advisory.length) html+='<div class="issue-list">'+res.advisory.map(a=>'<div class="issue">'+esc(a)+'</div>').join('')+'</div>';
+  if(res.tips&&res.tips.length){ html+='<h3>Gợi ý cải thiện</h3><div class="issue-list">'+res.tips.map(t=>'<div class="issue">'+esc(t)+'</div>').join('')+'</div>'; }
+  if(res.model){ html+='<h3>'+esc(res.modelTitle||'Câu mẫu')+'</h3><div class="model-essay">'+esc(res.model)+'</div>'; }
+  if(res.note) html+='<p class="wnote">'+res.note+'</p>';
+  R.innerHTML=html;
+}
+
+/* AI */
+async function spAiGrade(){
+  const text=$('spTranscript').value.trim();
+  if(!spItem){ alert('Hãy chọn đề trước.'); return; }
+  if(!text){ alert('Chưa có bản ghi lời nói để chấm. Hãy thu âm hoặc gõ lại.'); return; }
+  $('spRes').innerHTML='<p><span class="spinner"></span> Đang chấm bằng AI…</p>';
+  const prompt='You are an IELTS Speaking examiner. Assess this Part '+spPart+' answer given as a transcript. Do NOT grade pronunciation (no audio). '+
+    'Return ONLY valid JSON: {"bands":{"fc":0,"lr":0,"gra":0,"overall":0},"summary":"2-3 sentences IN VIETNAMESE","tips":["short tip in Vietnamese"],"better":"an improved Band 8 sample answer in English"}. Bands 0-9 in 0.5 steps. '+
+    'QUESTION: '+spQuestionText()+'\n\nTRANSCRIPT:\n'+text;
+  try{
+    let t=await callAI(prompt,1600); t=t.replace(/```json|```/g,'').trim();
+    const obj=JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1));
+    spRender({bands:obj.bands, summary:obj.summary, tips:obj.tips||[], model:obj.better, modelTitle:'Câu trả lời tốt hơn (AI)'});
+  }catch(e){ const h=spHeuristic(); if(h){ h.note=aiUnavailableNote(); spRender(h); } else $('spRes').innerHTML='<p class="wnote">'+aiUnavailableNote()+'</p>'; }
+}
+async function spAiModel(){
+  if(!spItem){ alert('Hãy chọn đề trước.'); return; }
+  $('spRes').innerHTML='<p><span class="spinner"></span> Đang tạo câu mẫu bằng AI…</p>';
+  const len=spPart===2?'about 180-220 words as a 1-2 minute long turn covering all the bullet points':(spPart===1?'about 40-60 words, natural and conversational':'about 70-100 words with a reason and example');
+  const prompt='Provide a Band 8 sample answer for this IELTS Speaking Part '+spPart+' question. Make it '+len+'. Natural spoken English. Return ONLY the answer text.\n\nQUESTION: '+spQuestionText();
+  try{ const t=await callAI(prompt,1500); spRender({model:t.trim(), modelTitle:'Câu mẫu (AI)'}); }
+  catch(e){ spSample(true); }
+}
+function spSample(isFallback){
+  if(!spItem){ alert('Hãy chọn đề trước.'); return; }
+  const m=spPart===2?spItem.model:spItem.a;
+  spRender({model:m, modelTitle:'Câu mẫu có sẵn', note:isFallback?aiUnavailableNote():''});
+}
+
+function openSpeaking(){ setPartUI(spPart||1); $('spRecTime').firstChild.nodeValue='00:00'; $('spRecHint').textContent='Bấm để bắt đầu thu âm'; $('spAudio').hidden=true; $('spTranscript').value=''; speakingModal.hidden=false; }
+function closeSpeaking(){ stopRecording(); resetPrep(); speakingModal.hidden=true; }
+
 /* ---------- events ---------- */
 card.addEventListener('click',e=>{ if(e.target.closest('[data-speak]')) return; setFlip(!flipped); });
 card.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); setFlip(!flipped);} });
@@ -940,11 +1194,25 @@ $('wModel').addEventListener('click',aiModel);
 $('wTemplate').addEventListener('click',showTemplate);
 $('wClear').addEventListener('click',()=>{ if(confirm('Xoá toàn bộ bài viết?')){ essay.value=''; onEssayInput(); $('wRes').innerHTML=''; } });
 $('wRes').addEventListener('click',e=>{ const mk=e.target.closest('mark.err'); if(mk){ applyFix(+mk.dataset.i); return; } const fb=e.target.closest('.fixbtn'); if(fb) applyFix(+fb.dataset.i); });
+$('speakingBtn').addEventListener('click',openSpeaking);
+$('spClose').addEventListener('click',closeSpeaking);
+$('sp1').addEventListener('click',()=>setPartUI(1));
+$('sp2').addEventListener('click',()=>setPartUI(2));
+$('sp3').addEventListener('click',()=>setPartUI(3));
+$('spRandom').addEventListener('click',spRandom);
+$('spSpeakQ').addEventListener('click',()=>{ if(spItem) speak(spQuestionText()); });
+$('spPrepBtn').addEventListener('click',startPrep);
+$('spRec').addEventListener('click',toggleRecording);
+$('spCheck').addEventListener('click',()=>{ const h=spHeuristic(); if(h) spRender(h); });
+$('spAiGrade').addEventListener('click',spAiGrade);
+$('spModel').addEventListener('click',spAiModel);
+$('spSample').addEventListener('click',()=>spSample(false));
 [modal,importModal,exportModal,globalModal,ipaModal,writingModal].forEach(mm=>mm.addEventListener('click',e=>{ if(e.target===mm) mm.hidden=true; }));
+speakingModal.addEventListener('click',e=>{ if(e.target===speakingModal) closeSpeaking(); });
 
 document.addEventListener('keydown',e=>{
-  const anyModal = !modal.hidden || !importModal.hidden || !exportModal.hidden || !globalModal.hidden || !ipaModal.hidden || !writingModal.hidden;
-  if(anyModal){ if(e.key==='Escape'){ modal.hidden=true; importModal.hidden=true; exportModal.hidden=true; globalModal.hidden=true; ipaModal.hidden=true; if(!writingModal.hidden){ stopTimer(); writingModal.hidden=true; } }
+  const anyModal = !modal.hidden || !importModal.hidden || !exportModal.hidden || !globalModal.hidden || !ipaModal.hidden || !writingModal.hidden || !speakingModal.hidden;
+  if(anyModal){ if(e.key==='Escape'){ modal.hidden=true; importModal.hidden=true; exportModal.hidden=true; globalModal.hidden=true; ipaModal.hidden=true; if(!writingModal.hidden){ stopTimer(); writingModal.hidden=true; } if(!speakingModal.hidden){ closeSpeaking(); } }
     else if(e.key==='Enter' && e.target.tagName!=='TEXTAREA' && !modal.hidden){ e.preventDefault(); saveFromModal(); } return; }
   if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA') return;
   if(e.key===' '){e.preventDefault(); setFlip(!flipped);}
