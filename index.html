@@ -79,6 +79,8 @@ button:active{transform:translateY(1px)} button[disabled]{opacity:.4; cursor:not
 .nav .side{flex:0 0 auto; width:54px; font-size:1.3rem; line-height:1; display:flex; align-items:center; justify-content:center}
 .nav .flip{flex:1; font-size:1rem; background:var(--ink); color:#fff; border-color:var(--ink)}
 .nav .flip:hover{background:#0c252e}
+.nav.move-row{margin-top:10px}
+.nav .move{flex:1; padding:12px 8px; font-size:.95rem}
 .toolbar{display:flex; gap:10px; margin-top:10px}
 .toolbar button{flex:1; padding:11px 8px; font-size:.88rem}
 .toolbar .add{background:var(--teal); color:#fff; border-color:var(--teal)}
@@ -152,9 +154,11 @@ footer{text-align:center; font-size:.73rem; color:var(--ink-soft); margin-top:18
   </div>
 
   <div class="nav">
-    <button class="side" id="prev" aria-label="Thẻ trước">‹</button>
     <button class="flip" id="flip">Lật thẻ</button>
-    <button class="side" id="next" aria-label="Thẻ sau">›</button>
+  </div>
+  <div class="nav move-row">
+    <button class="move" id="prev">‹ Trước đó</button>
+    <button class="move" id="next">Tiếp theo ›</button>
   </div>
   <div class="toolbar">
     <button class="add" id="addBtn">＋ Thêm thẻ</button>
@@ -278,6 +282,7 @@ function buildTopicOptions(keep){
   const sel=$('topic'); const cur=keep!=null?keep:sel.value; sel.innerHTML='';
   const cards=allCards(); const add=(v,t)=>{const o=document.createElement('option');o.value=v;o.textContent=t;sel.appendChild(o);};
   add('__all__','Tất cả chủ đề ('+cards.length+' thẻ)');
+  if(known.size) add('__known__','✓ Đã thuộc ('+known.size+')');
   if(USER.length) add('__mine__','★ Thẻ của tôi ('+USER.length+')');
   allTopics().forEach(t=>add(t, t+' ('+cards.filter(c=>c.topic===t).length+')'));
   if([...sel.options].some(o=>o.value===cur)) sel.value=cur; else sel.value='__all__';
@@ -304,29 +309,52 @@ function highlight(ex, coll){
 }
 
 /* ---------- deck ---------- */
-function buildDeck(){
+function matchTopicSearch(c, topic, q){
+  if(topic==='__mine__'){ if(!c.custom) return false; }
+  else if(topic!=='__all__' && topic!=='__known__' && c.topic!==topic) return false;
+  if(q && !(c.c.toLowerCase().includes(q) || (c.m||'').toLowerCase().includes(q))) return false;
+  return true;
+}
+function computeDeck(){
   const topic=$('topic').value, q=$('search').value.trim().toLowerCase();
-  deck=allCards().filter(c=>{
-    if(topic==='__mine__'){ if(!c.custom) return false; }
-    else if(topic!=='__all__' && c.topic!==topic) return false;
-    if(q && !(c.c.toLowerCase().includes(q) || (c.m||'').toLowerCase().includes(q))) return false;
-    return true;
+  return allCards().filter(c=>{
+    if(topic==='__known__') return known.has(c.id) && matchTopicSearch(c,topic,q);
+    if(known.has(c.id)) return false;            // hide learned cards from study views
+    return matchTopicSearch(c,topic,q);
   });
-  pos=0; flipped=false; render();
+}
+function scopeInfo(){
+  const topic=$('topic').value, q=$('search').value.trim().toLowerCase();
+  if(topic==='__known__') return {total:deck.length, learned:deck.length, knownView:true};
+  let total=0, learned=0;
+  allCards().forEach(c=>{ if(matchTopicSearch(c,topic,q)){ total++; if(known.has(c.id)) learned++; } });
+  return {total, learned, knownView:false};
+}
+function buildDeck(resetPos){
+  deck=computeDeck();
+  if(resetPos!==false) pos=0;
+  if(pos>=deck.length) pos=Math.max(0,deck.length-1);
+  flipped=false; render();
 }
 function shuffle(){ for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} pos=0; flipped=false; render(); }
 function setFlip(v){ flipped=v; card.classList.toggle('flip',v); $('flip').textContent=v?'Xem mặt trước':'Lật thẻ'; }
 function render(){
+  const info=scopeInfo();
   const empty=deck.length===0;
+  if(empty){
+    if(info.knownView) emptyEl.innerHTML='Chưa có thẻ nào trong danh sách <b>Đã thuộc</b>.';
+    else if(info.total>0) emptyEl.innerHTML='🎉 Bạn đã thuộc hết phần này!<br>Chọn <b>✓ Đã thuộc</b> để ôn lại, hoặc <b>↺ Xoá đánh dấu</b> để học lại.';
+    else emptyEl.innerHTML='Chưa có thẻ nào ở đây.<br>Bấm <b>＋ Thêm thẻ</b> hoặc <b>⇪ Nhập</b> để tạo thẻ.';
+  }
   emptyEl.style.display=empty?'block':'none';
   card.style.display=empty?'none':'';
-  document.querySelector('.nav').style.visibility=empty?'hidden':'visible';
-  const kn=deck.filter(c=>known.has(c.id)).length;
-  prog.style.width=(deck.length?(kn/deck.length*100):0)+'%';
-  if(empty){ countEl.textContent='0 / 0'; editBtn.hidden=true; return; }
+  document.querySelectorAll('.nav').forEach(n=>n.style.visibility=empty?'hidden':'visible');
+  prog.style.width=(info.total?(info.learned/info.total*100):0)+'%';
+  if(empty){ countEl.textContent = info.knownView?'0 đã thuộc':(info.total?('đã thuộc '+info.learned+'/'+info.total):'0 / 0'); editBtn.hidden=true; return; }
   if(pos>=deck.length) pos=deck.length-1;
   const c=deck[pos];
-  countEl.innerHTML='<b>'+(pos+1)+'</b> / '+deck.length+' · thuộc '+kn;
+  if(info.knownView) countEl.innerHTML='<b>'+(pos+1)+'</b> / '+deck.length+' · đã thuộc';
+  else countEl.innerHTML='<b>'+(pos+1)+'</b>/'+deck.length+' còn lại · thuộc '+info.learned+'/'+info.total;
   fw.textContent=c.c; bw.textContent=c.c; bm.textContent=c.m; be.innerHTML=highlight(c.e,c.c);
   fipa.textContent=c.ipa||''; bipa.textContent=c.ipa||'';
   bt.textContent='Chủ đề: '+c.topic;
@@ -334,10 +362,20 @@ function render(){
   card.classList.toggle('is-known',known.has(c.id));
   card.classList.toggle('is-custom',!!c.custom);
   knownBtn.classList.toggle('on',known.has(c.id));
+  knownBtn.textContent = info.knownView ? '↩ Bỏ đánh dấu' : 'Đã thuộc';
   editBtn.hidden=!c.custom;
 }
 function go(d){ if(!deck.length) return; pos=(pos+d+deck.length)%deck.length; flipped=false; render(); }
-function toggleKnown(){ if(!deck.length) return; const c=deck[pos]; known.has(c.id)?known.delete(c.id):known.add(c.id); lsSet(LS_KNOWN,[...known]); render(); }
+function toggleKnown(){
+  if(!deck.length) return;
+  const c=deck[pos], oldPos=pos;
+  known.has(c.id)?known.delete(c.id):known.add(c.id);
+  lsSet(LS_KNOWN,[...known]);
+  buildTopicOptions($('topic').value);     // refresh "Đã thuộc (n)" count
+  deck=computeDeck();
+  pos=Math.min(oldPos, Math.max(0,deck.length-1));
+  flipped=false; render();
+}
 
 /* ---------- add / edit ---------- */
 function onAddTopicChange(){ $('fTnew').hidden = $('fT').value!=='__new__'; }
@@ -423,7 +461,7 @@ $('prev').addEventListener('click',()=>go(-1));
 $('next').addEventListener('click',()=>go(1));
 $('shuffle').addEventListener('click',shuffle);
 $('known').addEventListener('click',toggleKnown);
-$('reset').addEventListener('click',()=>{ known.clear(); lsSet(LS_KNOWN,[]); render(); });
+$('reset').addEventListener('click',()=>{ if(!known.size){ alert('Chưa có thẻ nào được đánh dấu.'); return; } if(!confirm('Xoá toàn bộ đánh dấu đã thuộc? Tất cả thẻ sẽ hiện lại để học.')) return; known.clear(); lsSet(LS_KNOWN,[]); buildTopicOptions($('topic').value); buildDeck(); });
 $('topic').addEventListener('change',buildDeck);
 $('search').addEventListener('input',buildDeck);
 $('addBtn').addEventListener('click',()=>openModal(null));
