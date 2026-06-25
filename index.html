@@ -311,7 +311,7 @@ a piece of cake | dễ như ăn bánh"></textarea>
 <div class="modal" id="ipaModal" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ipaTitle">
     <h2 id="ipaTitle">Bảng IPA tiếng Anh</h2>
-    <p class="sub">Bấm vào ô để nghe phát âm (đọc từ ví dụ). Ký hiệu là phiên âm, từ đậm là âm minh hoạ.</p>
+    <p class="sub">Bấm vào ô: app đọc <b>âm IPA trước</b>, rồi đọc <b>từ ví dụ</b>. Âm đơn lẻ là mô phỏng bằng giọng máy; từ ví dụ là chuẩn để đối chiếu.</p>
     <div id="ipaBody"></div>
     <div class="mbtns"><button class="primary" id="ipaClose">Đóng</button></div>
   </div>
@@ -362,6 +362,19 @@ function speak(text){
     u.lang=(v&&v.lang) || (SET.accent==='en-US'?'en-US':'en-GB');
     u.rate=SET.rate; u.pitch=1;
     speechSynthesis.speak(u);
+  }catch(e){}
+}
+function speakSeq(parts){
+  if(!('speechSynthesis' in window)) return;
+  try{ speechSynthesis.cancel();
+    const v=pickVoice();
+    parts.filter(Boolean).forEach((t,i)=>{
+      const u=new SpeechSynthesisUtterance(t);
+      if(v) u.voice=v;
+      u.lang=(v&&v.lang) || (SET.accent==='en-US'?'en-US':'en-GB');
+      u.rate=SET.rate*(i===0?0.82:1); u.pitch=1;   // the isolated sound a touch slower
+      speechSynthesis.speak(u);
+    });
   }catch(e){}
 }
 
@@ -559,15 +572,16 @@ function openGlobal(){ renderStats(); applySetUI(); globalModal.hidden=false; }
 
 const IPA_DATA=[
  {h:'Nguyên âm đơn (Monophthongs)', items:[
-   ['iː','sheep'],['ɪ','ship'],['e','bed'],['æ','cat'],['ʌ','cup'],['ɑː','car'],
-   ['ɒ','hot'],['ɔː','door'],['ʊ','book'],['uː','food'],['ɜː','bird'],['ə','about'] ]},
+   ['iː','sheep','ee'],['ɪ','ship','ih'],['e','bed','eh'],['æ','cat','aa'],['ʌ','cup','uh'],['ɑː','car','aah'],
+   ['ɒ','hot','o'],['ɔː','door','or'],['ʊ','book','uu'],['uː','food','oo'],['ɜː','bird','er'],['ə','about','uh'] ]},
  {h:'Nguyên âm đôi (Diphthongs)', items:[
-   ['eɪ','day'],['aɪ','eye'],['ɔɪ','boy'],['aʊ','now'],['əʊ','go'],['ɪə','ear'],['eə','air'],['ʊə','tour'] ]},
+   ['eɪ','day','ay'],['aɪ','eye','eye'],['ɔɪ','boy','oy'],['aʊ','now','ow'],['əʊ','go','oh'],
+   ['ɪə','ear','eer'],['eə','air','air'],['ʊə','tour','oor'] ]},
  {h:'Phụ âm (Consonants)', items:[
-   ['p','pen'],['b','bad'],['t','tea'],['d','dog'],['k','cat'],['g','go'],
-   ['tʃ','chair'],['dʒ','jump'],['f','fish'],['v','van'],['θ','think'],['ð','this'],
-   ['s','sun'],['z','zoo'],['ʃ','she'],['ʒ','vision'],['h','hat'],['m','man'],
-   ['n','no'],['ŋ','sing'],['l','leg'],['r','red'],['w','wet'],['j','yes'] ]},
+   ['p','pen','puh'],['b','bad','buh'],['t','tea','tuh'],['d','dog','duh'],['k','cat','kuh'],['g','go','guh'],
+   ['tʃ','chair','chuh'],['dʒ','jump','juh'],['f','fish','fuh'],['v','van','vuh'],['θ','think','thuh'],['ð','this','thuh'],
+   ['s','sun','sss'],['z','zoo','zzz'],['ʃ','she','shuh'],['ʒ','vision','zhuh'],['h','hat','huh'],['m','man','mmm'],
+   ['n','no','nnn'],['ŋ','sing','ng'],['l','leg','luh'],['r','red','ruh'],['w','wet','wuh'],['j','yes','yuh'] ]},
 ];
 let ipaBuilt=false;
 function renderIPA(){
@@ -576,10 +590,10 @@ function renderIPA(){
     const s=document.createElement('div'); s.className='ipa-sec';
     const h=document.createElement('h3'); h.textContent=sec.h; s.appendChild(h);
     const g=document.createElement('div'); g.className='ipa-grid';
-    sec.items.forEach(([sym,word])=>{
+    sec.items.forEach(([sym,word,say])=>{
       const cell=document.createElement('div'); cell.className='ipa-cell'; cell.setAttribute('role','button'); cell.tabIndex=0;
       cell.innerHTML='<div class="sym">/'+sym+'/</div><div class="ex">🔊 <b>'+word+'</b></div>';
-      const play=()=>speak(word);
+      const play=()=>speakSeq([say, word]);   // đọc âm rồi tới từ ví dụ
       cell.addEventListener('click',play);
       cell.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); play(); } });
       g.appendChild(cell);
