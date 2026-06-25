@@ -138,6 +138,48 @@ footer{text-align:center; font-size:.73rem; color:var(--ink-soft); margin-top:18
 .ipa-cell .sym{font-size:1.3rem; font-weight:700; color:var(--ink); font-family:"Be Vietnam Pro"}
 .ipa-cell .ex{font-size:.74rem; color:var(--ink-soft); margin-top:3px}
 .ipa-cell .ex b{color:var(--teal-d); font-weight:700}
+.writing-launch{width:100%; margin-top:12px; padding:14px; font-size:1rem; font-weight:700; color:#fff;
+  background:linear-gradient(100deg,#1f8a70,#136655); border:none; border-radius:14px; cursor:pointer}
+.writing-launch:hover{filter:brightness(1.05)}
+.wsheet{max-width:760px}
+.wtabs{display:flex; gap:8px; margin:2px 0 12px}
+.wtabs button{flex:1; padding:10px; font-size:.92rem; border:1px solid var(--line); background:var(--paper)}
+.wtabs button.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+.prompt-box{background:#eef3f1; border:1px solid var(--line); border-radius:13px; padding:14px; font-size:.92rem; line-height:1.55; white-space:pre-wrap; margin-bottom:10px}
+.prompt-box .ptype{font-size:.68rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal-d); display:block; margin-bottom:6px}
+.wbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px}
+.wbar button{padding:9px 12px; font-size:.85rem}
+.wmeta{margin-left:auto; display:flex; gap:14px; align-items:center; font-size:.85rem; font-variant-numeric:tabular-nums}
+.wmeta .timer{font-weight:700; font-family:"Bricolage Grotesque",sans-serif}
+.wmeta .wc b{color:var(--ink)}
+.wc.under b{color:#b3261e}
+.wc.ok b{color:var(--teal-d)}
+#essay{width:100%; min-height:230px; line-height:1.6; font-size:.95rem; resize:vertical; padding:13px}
+.wactions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.wactions button{flex:1 1 auto; padding:11px 10px; font-size:.88rem}
+.wactions .ai{background:var(--teal); color:#fff; border-color:var(--teal)}
+.wactions .ai:hover{background:var(--teal-d)}
+.wres{margin-top:14px}
+.band-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:6px 0 12px}
+.band{background:#eef3f1; border-radius:11px; padding:9px 4px; text-align:center}
+.band .b{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:1.25rem; color:var(--ink)}
+.band.overall{background:#dcefe5; outline:1.5px solid var(--teal)}
+.band .t{font-size:.6rem; color:var(--ink-soft); margin-top:3px; letter-spacing:.04em}
+.wres h3{font-family:"Bricolage Grotesque",sans-serif; font-size:1rem; color:var(--teal-d); margin:14px 0 6px}
+.issue-list{display:flex; flex-direction:column; gap:7px}
+.issue{border:1px solid var(--line); border-radius:11px; padding:9px 12px; font-size:.86rem}
+.issue .o{text-decoration:line-through; color:#b3261e}
+.issue .s{color:var(--teal-d); font-weight:600}
+.issue .why{display:block; color:var(--ink-soft); margin-top:3px; font-size:.8rem}
+.issue .fixbtn{margin-top:7px; padding:5px 12px; font-size:.78rem; border-color:var(--teal); color:var(--teal-d)}
+.issue.done{opacity:.5}
+.preview{border:1px solid var(--line); border-radius:13px; padding:14px; font-size:.92rem; line-height:1.7; white-space:pre-wrap}
+.preview mark.err{background:#ffe0dc; border-bottom:2px solid #e2776b; cursor:pointer; border-radius:3px; padding:0 1px}
+.preview mark.err:hover{background:#ffcfc8}
+.model-essay{border:1px solid var(--line); border-radius:13px; padding:14px; font-size:.92rem; line-height:1.65; white-space:pre-wrap; background:#fbfcfe}
+.wnote{font-size:.78rem; color:var(--ink-soft); margin-top:8px; line-height:1.5}
+.spinner{display:inline-block; width:15px; height:15px; border:2px solid #cfe6df; border-top-color:var(--teal); border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){ .card{transition:none} }
 </style>
 </head>
@@ -202,6 +244,7 @@ footer{text-align:center; font-size:.73rem; color:var(--ink-soft); margin-top:18
     <button id="exportBtn">⇩ Xuất</button>
     <button id="reset">↺ Xoá đánh dấu</button>
   </div>
+  <button class="writing-launch" id="writingBtn">✍️ Luyện Writing — Task 1 &amp; Task 2</button>
 
   <footer>
     Mẹo: nghe phát âm 2–3 lần rồi đọc to theo. Tự đặt một câu cho mỗi cụm để nhớ lâu.<br>
@@ -314,6 +357,36 @@ a piece of cake | dễ như ăn bánh"></textarea>
     <p class="sub">Bấm vào ô: app đọc <b>âm IPA trước</b>, rồi đọc <b>từ ví dụ</b>. Âm đơn lẻ là mô phỏng bằng giọng máy; từ ví dụ là chuẩn để đối chiếu.</p>
     <div id="ipaBody"></div>
     <div class="mbtns"><button class="primary" id="ipaClose">Đóng</button></div>
+  </div>
+</div>
+
+<!-- Writing workspace -->
+<div class="modal" id="writingModal" hidden>
+  <div class="sheet wsheet" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+    <h2 id="wTitle">Luyện Writing</h2>
+    <div class="wtabs">
+      <button id="tab1" class="on">Task 1</button>
+      <button id="tab2">Task 2</button>
+    </div>
+    <div class="wbar">
+      <button id="wRandom">🎲 Đề ngẫu nhiên</button>
+      <div class="wmeta">
+        <span class="timer" id="wTimer">20:00</span>
+        <button id="wTimerBtn" style="padding:6px 10px">▶</button>
+        <span class="wc" id="wWC">Từ: <b>0</b></span>
+      </div>
+    </div>
+    <div class="prompt-box" id="wPrompt"><span class="ptype">Đề bài</span>Bấm “Đề ngẫu nhiên” để bắt đầu.</div>
+    <textarea id="essay" placeholder="Viết bài của bạn ở đây… (Task 1 ≥ 150 từ / 20 phút · Task 2 ≥ 250 từ / 40 phút)"></textarea>
+    <div class="wactions">
+      <button id="wCheck">⚡ Tự chấm nhanh</button>
+      <button id="wAiGrade" class="ai">✨ Chấm &amp; sửa (AI)</button>
+      <button id="wModel" class="ai">✨ Bài mẫu (AI)</button>
+      <button id="wTemplate">📑 Cấu trúc mẫu</button>
+      <button id="wClear">🗑 Xoá bài</button>
+    </div>
+    <div class="wres" id="wRes"></div>
+    <div class="mbtns"><button class="primary" id="wClose">Đóng</button></div>
   </div>
 </div>
 
@@ -603,6 +676,224 @@ function renderIPA(){
 }
 function openIpaChart(){ if(!ipaBuilt){ renderIPA(); ipaBuilt=true; } globalModal.hidden=true; ipaModal.hidden=false; }
 
+/* ================= WRITING MODULE ================= */
+const writingModal=$('writingModal'), essay=$('essay');
+const T1_PROMPTS=[
+ "The chart below shows the percentage of households with internet access in four countries in 2010 and 2020.\n\nUSA: 70% → 92%\nJapan: 65% → 90%\nBrazil: 30% → 75%\nIndia: 10% → 55%\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+ "The table below shows the number of visitors (millions) to three museums from 2015 to 2019.\n\nArt Museum: 2.1, 2.4, 2.6, 2.9, 3.2\nHistory Museum: 1.8, 1.7, 1.9, 1.6, 1.5\nScience Museum: 1.0, 1.3, 1.7, 2.2, 2.8\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+ "The diagram below shows the process of producing bottled drinking water.\n\nStages: collect water from source → filtration → purification (UV) → bottling → labelling → packaging → distribution.\n\nSummarise the information by selecting and reporting the main features.",
+ "The two maps below show a town centre in 1990 and today.\n\n1990: a park in the centre, small shops on the east, a river to the west.\nToday: the park replaced by a shopping mall, shops became a car park, a pedestrian bridge added across the river.\n\nSummarise the information by selecting and reporting the main features.",
+ "The bar chart below shows average monthly spending (USD) on leisure by three age groups.\n\nUnder 30: dining 120, travel 80, gym 60\n30–50: dining 150, travel 200, gym 40\nOver 50: dining 90, travel 250, gym 30\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+ "The pie charts below show the sources of household waste in a city in 2000 and 2020.\n\n2000: food 50%, plastic 20%, paper 20%, other 10%\n2020: food 35%, plastic 35%, paper 15%, other 15%\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+ "The line graph below shows the population (millions) of three cities from 1980 to 2020.\n\nCity A: 2 → 4 → 6 → 8 → 9\nCity B: 5 → 5.5 → 5 → 4.5 → 4\nCity C: 1 → 2 → 4 → 7 → 11\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+ "The table below shows the percentage of people using different transport to work in a city in 2005 and 2020.\n\nCar: 55% → 40%\nBus: 25% → 22%\nBicycle: 10% → 25%\nWalking: 10% → 13%\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+];
+const T2_PROMPTS=[
+ "Some people believe that university education should be free for everyone, while others think students should pay for it themselves. Discuss both views and give your own opinion.",
+ "Many people think that technology has made our lives more complicated rather than easier. To what extent do you agree or disagree?",
+ "In many countries, the gap between the rich and the poor is increasing. What problems does this cause, and what solutions can you suggest?",
+ "Some people think children should start learning a foreign language at primary school, while others believe this should begin at secondary school. Discuss both views and give your opinion.",
+ "Working from home is becoming more common. Do the advantages of this trend outweigh the disadvantages?",
+ "Some believe that governments should spend money on public services rather than on the arts, such as music and theatre. To what extent do you agree or disagree?",
+ "Many young people today spend too much time on social media. What are the causes, and what effects does this have on society?",
+ "Some people think that older employees are more valuable than younger ones, while others disagree. Discuss both views and give your own opinion.",
+ "Tourism brings both benefits and problems to local communities. Do the benefits outweigh the drawbacks?",
+ "Some argue that the best way to reduce crime is to give longer prison sentences, while others think there are better alternatives. Discuss both views and give your opinion.",
+ "In the future, fewer people will use cash and most payments will be electronic. Do you think this is a positive or a negative development?",
+ "Many people believe that protecting the environment is the responsibility of governments, not individuals. To what extent do you agree or disagree?",
+ "Some people think that a healthy lifestyle should be taught in schools. Others believe it is the parents' duty. Discuss both views and give your own opinion.",
+ "Advertising influences what people buy. Do you think this is a positive or a negative thing?",
+ "Some countries encourage people to move from cities to the countryside. What are the advantages and disadvantages of this trend?",
+ "Many students choose to study abroad. What are the benefits and drawbacks of studying in a different country?",
+];
+
+const T_OFFLINE_MODEL={
+ 1:"CẤU TRÚC TASK 1 (≈170 từ):\n\n• Mở bài (1 câu): paraphrase đề — đổi từ/cấu trúc, không chép lại.\n  \"The chart illustrates / The table compares / The diagram shows…\"\n• Tổng quan (Overview, 2 câu, KHÔNG số liệu): nêu 2 xu hướng/đặc điểm nổi bật nhất.\n  \"Overall, it is clear that… while…\"\n• Thân bài 1 (3–4 câu): nhóm số liệu thứ nhất, có số liệu cụ thể.\n• Thân bài 2 (3–4 câu): nhóm còn lại + so sánh.\n\nCụm hữu ích: rise sharply, increase steadily, a gradual increase, reach a peak at, account for, compared with, the highest figure, remain stable, fall slightly.",
+ 2:"CẤU TRÚC TASK 2 (≈280 từ, 4 đoạn):\n\n• Mở bài (2 câu): paraphrase đề + nêu lập trường/định hướng bài.\n  \"It is often argued that… This essay will discuss… and argue that…\"\n• Thân bài 1 (5–6 câu): ý chính 1 → giải thích → ví dụ.\n  \"One major reason is that… For instance,…\"\n• Thân bài 2 (5–6 câu): ý chính 2 → giải thích → ví dụ.\n  \"In addition,… This is because… A good example would be…\"\n• Kết bài (2 câu): tóm tắt + nhắc lại quan điểm.\n  \"In conclusion,… Therefore, I believe that…\"\n\nCụm hữu ích: it is widely believed that, lead to, as a result, on the other hand, play a key role, to some extent, in conclusion."
+};
+
+let wTask=1, wPromptText='', wTimerSec=20*60, wTimerOn=false, wTimerId=null, wLastRes=null, wIssues=[];
+const LS_WE='ielts_w_essay_v1', LS_WP='ielts_w_prompt_v1', LS_WT='ielts_w_task_v1';
+
+function wSecFor(){ return wTask===1?20*60:40*60; }
+function wTarget(){ return wTask===1?150:250; }
+function fmtTime(s){ const m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+function setTask(n){
+  wTask=n; $('tab1').classList.toggle('on',n===1); $('tab2').classList.toggle('on',n===2);
+  stopTimer(); wTimerSec=wSecFor(); $('wTimer').textContent=fmtTime(wTimerSec);
+  lsSet(LS_WT,n); updateWC();
+}
+function randomPrompt(){
+  const bank=wTask===1?T1_PROMPTS:T2_PROMPTS;
+  wPromptText=bank[Math.floor(Math.random()*bank.length)];
+  renderPrompt(); lsSet(LS_WP,{t:wTask,p:wPromptText});
+  stopTimer(); wTimerSec=wSecFor(); $('wTimer').textContent=fmtTime(wTimerSec);
+}
+function renderPrompt(){
+  $('wPrompt').innerHTML='<span class="ptype">Đề bài · Task '+wTask+'</span>'+esc(wPromptText||'Bấm “Đề ngẫu nhiên” để bắt đầu.');
+}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* timer */
+function tick(){ if(wTimerSec<=0){ stopTimer(); alert('⏰ Hết giờ!'); return; } wTimerSec--; $('wTimer').textContent=fmtTime(wTimerSec); }
+function startTimer(){ if(wTimerOn) return; wTimerOn=true; $('wTimerBtn').textContent='⏸'; wTimerId=setInterval(tick,1000); }
+function stopTimer(){ wTimerOn=false; $('wTimerBtn').textContent='▶'; if(wTimerId) clearInterval(wTimerId); wTimerId=null; }
+function toggleTimer(){ wTimerOn?stopTimer():startTimer(); }
+
+/* word count + autosave */
+function updateWC(){
+  const words=(essay.value.match(/[A-Za-z0-9'’]+/g)||[]).length;
+  const el=$('wWC'); el.innerHTML='Từ: <b>'+words+'</b> / '+wTarget();
+  el.className='wc '+(words>=wTarget()?'ok':'under');
+}
+function onEssayInput(){ updateWC(); lsSet(LS_WE,essay.value); }
+
+/* ---- offline heuristic check ---- */
+const LINKERS=['however','moreover','furthermore','therefore','consequently','in addition','for example','for instance','on the other hand','in contrast','as a result','firstly','secondly','finally','in conclusion','overall','nevertheless','whereas','while','despite','although','in particular','such as'];
+const W_STOP=new Set(['the','a','an','and','or','but','to','of','in','on','at','for','with','is','are','was','were','be','been','it','this','that','these','those','i','you','he','she','they','we','as','by','from','their','our','your','his','her','its','will','can','would','should','could','have','has','had','do','does','not','than','then','also','more','most','many','much','some','any','all','people','because','which','who','what','when','there','they','them']);
+function replaceFirst(h,n,r){ const i=h.indexOf(n); return i<0?h:h.slice(0,i)+r+h.slice(i+n.length); }
+function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function replaceFirstSmart(h,n,r){
+  if(/^[A-Za-z0-9'’]+$/.test(n)){
+    const re=new RegExp('\\b'+escRe(n)+'\\b');
+    if(re.test(h)) return h.replace(re,()=>r);
+  }
+  return replaceFirst(h,n,r);
+}
+function heuristicCheck(){
+  const text=essay.value; const issues=[];
+  const words=text.match(/[A-Za-z0-9'’]+/g)||[];
+  const wc=words.length;
+  const paras=text.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+  const sentences=text.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>1);
+  const lens=sentences.map(s=>(s.match(/[A-Za-z0-9'’]+/g)||[]).length);
+  const avg=lens.length?lens.reduce((a,b)=>a+b,0)/lens.length:0;
+  const longS=lens.filter(l=>l>40).length;
+  const linkUsed=LINKERS.filter(l=>text.toLowerCase().includes(l)).length;
+  // repetition
+  const freq={}; words.forEach(w=>{w=w.toLowerCase(); if(w.length>3&&!W_STOP.has(w)) freq[w]=(freq[w]||0)+1;});
+  const repeated=Object.entries(freq).filter(([w,n])=>n>=5).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  // mechanical, fixable
+  const mech=[
+    [/  +/, ' ', 'Thừa dấu cách'],
+    [/\balot\b/i, 'a lot', 'Sai chính tả: viết "a lot"'],
+    [/\brecieve\b/i, 'receive', 'Sai chính tả'],
+    [/\bteh\b/i, 'the', 'Lỗi gõ'],
+    [/\bthier\b/i, 'their', 'Sai chính tả'],
+    [/\bbecuase\b/i, 'because', 'Sai chính tả'],
+    [/\bdefinately\b/i, 'definitely', 'Sai chính tả'],
+    [/\benviroment\b/i, 'environment', 'Sai chính tả'],
+    [/\bgovernement\b/i, 'government', 'Sai chính tả'],
+    [/\bi\b/, 'I', 'Đại từ "I" luôn viết hoa'],
+  ];
+  mech.forEach(([re,sug,why])=>{ const m=text.match(re); if(m){ const orig=m[0]; const fix=(sug==='I'||/[A-Z]/.test(sug))?sug:sug; issues.push({original:orig, suggestion:fix, explanation:why, fixable:true}); } });
+  // missing capital after . 
+  const capM=text.match(/[.!?]\s+([a-z])/);
+  if(capM){ issues.push({original:capM[0], suggestion:capM[0].replace(/([a-z])$/,c=>c.toUpperCase()), explanation:'Viết hoa đầu câu sau dấu chấm', fixable:true}); }
+  // advisory (not fixable)
+  const adv=[];
+  if(wc<wTarget()) adv.push('⚠ Bài đang '+wc+' từ — chưa đạt tối thiểu '+wTarget()+' từ (sẽ bị trừ điểm Task Response).');
+  if(paras.length < (wTask===1?3:4)) adv.push('Nên chia rõ ràng hơn: Task '+wTask+' cần khoảng '+(wTask===1?'3–4':'4')+' đoạn (mở/overview/thân/kết).');
+  if(linkUsed<3) adv.push('Dùng thêm từ nối (however, moreover, for example…) để tăng Coherence — hiện chỉ thấy ~'+linkUsed+' loại.');
+  if(longS>0) adv.push(longS+' câu quá dài (>40 từ) — dễ sai ngữ pháp, nên tách câu.');
+  if(repeated.length) adv.push('Lặp từ nhiều: '+repeated.map(([w,n])=>'“'+w+'” ('+n+' lần)').join(', ')+' — thử dùng từ đồng nghĩa.');
+  // estimated band
+  let b=6.0;
+  if(wc<wTarget()) b-=1.0; if(paras.length<(wTask===1?3:4)) b-=0.5;
+  if(linkUsed>=4) b+=0.5; else if(linkUsed<2) b-=0.5;
+  if(issues.length>3) b-=0.5; if(avg>=12&&avg<=22) b+=0.5; if(repeated.length>=2) b-=0.5;
+  b=Math.max(4.0,Math.min(7.5,b));
+  return {heuristic:true, band:b, wc, advisory:adv, issues};
+}
+
+/* ---- render results ---- */
+function bandCell(v,t,overall){ return '<div class="band'+(overall?' overall':'')+'"><div class="b">'+(v==null?'–':v)+'</div><div class="t">'+t+'</div></div>'; }
+function renderResults(res){
+  wLastRes=res; wIssues=res.issues||[];
+  const R=$('wRes'); let html='';
+  if(res.bands){
+    html+='<h3>Điểm ước lượng (AI)</h3><div class="band-grid">'+
+      bandCell(res.bands.ta,'Task')+bandCell(res.bands.cc,'Coherence')+bandCell(res.bands.lr,'Lexical')+
+      bandCell(res.bands.gra,'Grammar')+bandCell(res.bands.overall,'Overall',true)+'</div>';
+  } else if(res.heuristic){
+    html+='<h3>Tự chấm nhanh (ước lượng)</h3><div class="band-grid"><div class="band overall" style="grid-column:1/-1"><div class="b">~ '+res.band.toFixed(1)+'</div><div class="t">band ước lượng theo quy tắc · chỉ tham khảo</div></div></div>';
+  }
+  if(res.summary) html+='<p style="font-size:.9rem;line-height:1.55">'+esc(res.summary)+'</p>';
+  if(res.advisory&&res.advisory.length){ html+='<h3>Nhận xét</h3><div class="issue-list">'+res.advisory.map(a=>'<div class="issue">'+esc(a)+'</div>').join('')+'</div>'; }
+  // clickable preview
+  if(wIssues.length){
+    html+='<h3>Lỗi &amp; sửa <span style="font-weight:400;font-size:.78rem;color:var(--ink-soft)">(bấm vào từ gạch đỏ để sửa)</span></h3>';
+    html+='<div class="preview" id="wPreview"></div>';
+    html+='<div class="issue-list" style="margin-top:10px">'+wIssues.map((it,i)=> it.original?(
+      '<div class="issue'+(it.done?' done':'')+'" data-row="'+i+'"><span class="o">'+esc(it.original)+'</span> → <span class="s">'+esc(it.suggestion||'')+'</span>'+
+      (it.explanation?'<span class="why">'+esc(it.explanation)+'</span>':'')+
+      (it.fixable!==false&&!it.done?'<button class="fixbtn" data-i="'+i+'">Sửa</button>':'')+'</div>'):'').join('')+'</div>';
+  }
+  if(res.model){ html+='<h3>Bài mẫu</h3><div class="model-essay">'+esc(res.model)+'</div>'; }
+  if(res.note){ html+='<p class="wnote">'+res.note+'</p>'; }
+  R.innerHTML=html;
+  if(wIssues.length){ const pv=$('wPreview'); if(pv) pv.innerHTML=buildPreview(); }
+}
+function buildPreview(){
+  let html=esc(essay.value);
+  wIssues.forEach((it,idx)=>{ if(it.done||!it.original) return; const needle=esc(it.original);
+    html=replaceFirstSmart(html,needle,'<mark class="err" data-i="'+idx+'" title="→ '+esc(it.suggestion||'')+'">'+needle+'</mark>'); });
+  return html;
+}
+function applyFix(idx){
+  const it=wIssues[idx]; if(!it||it.done||it.fixable===false) return;
+  essay.value=replaceFirstSmart(essay.value, it.original, it.suggestion); it.done=true;
+  onEssayInput(); renderResults(wLastRes);
+}
+
+/* ---- AI calls ---- */
+async function callAI(prompt, maxTokens){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:maxTokens||1500,messages:[{role:"user",content:prompt}]})});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const d=await r.json();
+  return (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+function aiUnavailableNote(){ return 'Không gọi được AI (file đang chạy ngoại tuyến hoặc ngoài Claude.ai). Đang hiển thị bản tự chấm/cấu trúc offline thay thế.'; }
+
+async function aiGrade(){
+  if(!wPromptText){ alert('Hãy chọn đề trước.'); return; }
+  if(!essay.value.trim()){ alert('Hãy viết bài trước.'); return; }
+  $('wRes').innerHTML='<p><span class="spinner"></span> Đang chấm bằng AI…</p>';
+  const prompt='You are a strict IELTS examiner. Assess the IELTS Writing Task '+wTask+' response below. '+
+    'Return ONLY valid JSON (no markdown) with shape: {"bands":{"ta":0,"cc":0,"lr":0,"gra":0,"overall":0},'+
+    '"summary":"2-3 sentences of feedback IN VIETNAMESE","errors":[{"original":"exact text copied from the essay","suggestion":"correction","explanation":"short reason in Vietnamese"}]}. '+
+    'Bands use 0-9 in 0.5 steps. Each "original" MUST be an exact substring of the essay so it can be highlighted. Give up to 12 key errors. '+
+    'PROMPT: '+wPromptText+'\n\nESSAY:\n'+essay.value;
+  try{
+    let txt=await callAI(prompt,1600);
+    txt=txt.replace(/```json|```/g,'').trim();
+    const s=txt.indexOf('{'), e=txt.lastIndexOf('}');
+    const obj=JSON.parse(txt.slice(s,e+1));
+    const issues=(obj.errors||[]).map(x=>({original:x.original,suggestion:x.suggestion,explanation:x.explanation,fixable:true}));
+    renderResults({bands:obj.bands, summary:obj.summary, issues});
+  }catch(err){
+    const h=heuristicCheck(); h.note=aiUnavailableNote(); renderResults(h);
+  }
+}
+async function aiModel(){
+  if(!wPromptText){ alert('Hãy chọn đề trước.'); return; }
+  $('wRes').innerHTML='<p><span class="spinner"></span> Đang tạo bài mẫu bằng AI…</p>';
+  const prompt='Write a Band 9 model answer for this IELTS Writing Task '+wTask+' question. '+
+    'About '+(wTask===1?170:280)+' words, clear paragraphing, formal academic style. Return ONLY the essay text, no preamble.\n\nQUESTION: '+wPromptText;
+  try{ const txt=await callAI(prompt,1500); renderResults({model:txt.trim()}); }
+  catch(err){ renderResults({model:T_OFFLINE_MODEL[wTask], note:aiUnavailableNote()}); }
+}
+function showTemplate(){ renderResults({model:T_OFFLINE_MODEL[wTask]}); }
+
+function openWriting(){
+  const savedTask=lsGet(LS_WT)||1; setTask(savedTask);
+  const sp=lsGet(LS_WP); if(sp&&sp.p){ wTask=sp.t||savedTask; setTask(wTask); wPromptText=sp.p; }
+  renderPrompt();
+  const se=lsGet(LS_WE); essay.value = (typeof se==='string')?se:'';
+  updateWC(); $('wRes').innerHTML=''; writingModal.hidden=false;
+}
+
 /* ---------- events ---------- */
 card.addEventListener('click',e=>{ if(e.target.closest('[data-speak]')) return; setFlip(!flipped); });
 card.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); setFlip(!flipped);} });
@@ -636,11 +927,24 @@ $('ipaClose').addEventListener('click',()=>ipaModal.hidden=true);
 $('setAccent').addEventListener('change',e=>{ SET.accent=e.target.value; saveSet(); });
 $('setRate').addEventListener('input',e=>{ SET.rate=parseFloat(e.target.value); $('rateVal').textContent=fmtRate(SET.rate); saveSet(); });
 $('setAuto').addEventListener('change',e=>{ SET.autoSpeak=e.target.checked; saveSet(); });
-[modal,importModal,exportModal,globalModal,ipaModal].forEach(mm=>mm.addEventListener('click',e=>{ if(e.target===mm) mm.hidden=true; }));
+$('writingBtn').addEventListener('click',openWriting);
+$('wClose').addEventListener('click',()=>{ stopTimer(); writingModal.hidden=true; });
+$('tab1').addEventListener('click',()=>setTask(1));
+$('tab2').addEventListener('click',()=>setTask(2));
+$('wRandom').addEventListener('click',randomPrompt);
+$('wTimerBtn').addEventListener('click',toggleTimer);
+$('essay').addEventListener('input',onEssayInput);
+$('wCheck').addEventListener('click',()=>renderResults(heuristicCheck()));
+$('wAiGrade').addEventListener('click',aiGrade);
+$('wModel').addEventListener('click',aiModel);
+$('wTemplate').addEventListener('click',showTemplate);
+$('wClear').addEventListener('click',()=>{ if(confirm('Xoá toàn bộ bài viết?')){ essay.value=''; onEssayInput(); $('wRes').innerHTML=''; } });
+$('wRes').addEventListener('click',e=>{ const mk=e.target.closest('mark.err'); if(mk){ applyFix(+mk.dataset.i); return; } const fb=e.target.closest('.fixbtn'); if(fb) applyFix(+fb.dataset.i); });
+[modal,importModal,exportModal,globalModal,ipaModal,writingModal].forEach(mm=>mm.addEventListener('click',e=>{ if(e.target===mm) mm.hidden=true; }));
 
 document.addEventListener('keydown',e=>{
-  const anyModal = !modal.hidden || !importModal.hidden || !exportModal.hidden || !globalModal.hidden || !ipaModal.hidden;
-  if(anyModal){ if(e.key==='Escape'){ modal.hidden=true; importModal.hidden=true; exportModal.hidden=true; globalModal.hidden=true; ipaModal.hidden=true; }
+  const anyModal = !modal.hidden || !importModal.hidden || !exportModal.hidden || !globalModal.hidden || !ipaModal.hidden || !writingModal.hidden;
+  if(anyModal){ if(e.key==='Escape'){ modal.hidden=true; importModal.hidden=true; exportModal.hidden=true; globalModal.hidden=true; ipaModal.hidden=true; if(!writingModal.hidden){ stopTimer(); writingModal.hidden=true; } }
     else if(e.key==='Enter' && e.target.tagName!=='TEXTAREA' && !modal.hidden){ e.preventDefault(); saveFromModal(); } return; }
   if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA') return;
   if(e.key===' '){e.preventDefault(); setFlip(!flipped);}
